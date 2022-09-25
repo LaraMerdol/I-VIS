@@ -10,10 +10,10 @@ Actor Number = 3
 <img src="https://user-images.githubusercontent.com/59064089/192145146-8a25b859-fb5d-4141-83fb-9f4ace384d9c.png" width="800px"/>
 
 In addition, when the user right clicks on an actor node, a context menu  appears with the sole content of “Show movies”. When the user selects this option, all movies in which that actor played are added to the current graph if not already in the graph. In the same way, when a user right clicks on a movie node, a context menu  appears with “Show actors”, and upon selection, all actors of that movie, if not already in the graph, are added to the current graph.
-“Show movies”
+“Show actors”
 <img src="https://user-images.githubusercontent.com/59064089/192145322-e93bd36d-3c12-4688-8eb3-caef4733b1ab.png" width="800px"/>
 <img src="https://user-images.githubusercontent.com/59064089/192145494-5f758402-8548-45d3-9235-94b0571ca354.png" width="800px"/>
-“Show actors”
+“Show movies”
 <img src="https://user-images.githubusercontent.com/59064089/192145638-fa766681-bc95-4662-b341-5e10e703cd09.png" width="800px"/>
 <img src="https://user-images.githubusercontent.com/59064089/192145645-923fdf63-5bba-4787-88e4-30dbb4b7e93a.png" width="800px"/>
 
