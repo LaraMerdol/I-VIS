@@ -22,7 +22,8 @@ In addition, users can learn the details about the actors, movies or even relati
 
 
 # Deployment Guide 
-Built with Node.js version v16.15.1 Use "npm i"to install dependencies. "node app.js" to run in development mode. 
+Built with Node.js version v16.15.1 Use "npm i"to install dependencies. "node app.js" to run in development mode. Application starts in port http://localhost:3000/
+
 Application use  default movie dataset stored in Neo4j graph database .
 For authentication change this part
 <img src="https://user-images.githubusercontent.com/59064089/192146260-f05d8c8a-7abd-4abc-86f4-05709f856578.png" width="800px"/>
