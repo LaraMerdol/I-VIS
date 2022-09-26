@@ -49,7 +49,7 @@ app.get("/", function (req, res) {
   res.render("./index", {
     movies: movieArr,
     name: name,
-    number: number,
+    number: number/2,
   });
 });
 
@@ -58,7 +58,7 @@ app.post("/search", function (req, res) {
   actors = [];
   movies = [];
   name = req.body.name;
-  number = req.body.number;
+  number = (req.body.number)*2;
   var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic());
   var session = driver.session();
   session
@@ -100,7 +100,7 @@ app.post("/search", function (req, res) {
       res.render("./index", {
         movies: movieArr,
         name: name,
-        number: number,
+        number: number/2,
       });
     })
     .catch(function (err) {
