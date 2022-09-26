@@ -90,6 +90,7 @@ app.post("/search", function (req, res) {
                 id: edge.start.low + "" + edge.end.low + edge.type,
                 source: edge.start.low,
                 target: edge.end.low,
+                type: edge.type,
                 label: edge.type,
                 properties: edge.properties,
               },
@@ -107,137 +108,144 @@ app.post("/search", function (req, res) {
       console.log(err);
     });
 });
-app.post("/add", function (req, res) {
+app.post("/addMovies", function (req, res) {
   newElements = [];
   var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic());
-  var session = driver.session();
-  if (req.body.name.type == "Movie") {
-    var title = req.body.name.properties.title;
-    session
-      .run(
-        'MATCH p = (movie:Movie {title:"' +
-          title +
-          '"})<-[edge]-(hollywood)  RETURN hollywood , edge'
-      )
-      .then(function (result) {
-        result.records.forEach(function (record) {
-          var id = "";
-          if (!actors.includes(record._fields[0].properties.name )) {
-            
-            newElements.push({
-              data: {
-                id: record._fields[0].identity.low + "n" + title,
-                type: record._fields[0].labels[0],
-                properties: record._fields[0].properties,
-              },
-            });
-            id = record._fields[0].identity.low + "n" + title;
-            actors.push(record._fields[0].properties.name);
-            movieArr.push({
-              data: {
-                id: record._fields[0].identity.low + "n" + title,
-                type: record._fields[0].labels[0],
-                properties: record._fields[0].properties,
-              },
-            });
-          }      
-          else{
-            movieArr.forEach(function(element){
-              if(element.data.type =='Person' && element.data.properties.name == record._fields[0].properties.name){
-                id =element.data.id;    
-              }
-            }) 
-  
-          }
-          if(!movieArr.some(e => e.data.id == id+req.body.name.id +record._fields[1].type)){
-            newElement = {
-              data: {
-                id:id+
-                  req.body.name.id +
-                  record._fields[1].type,
-                source: id,
-                target: req.body.name.id,
-                label: record._fields[1].type,
-                properties: record._fields[1].properties,
-              },
-            };
-            newElements.push(newElement) ;
-            movieArr.push(newElement);
-
-          }
-
-        });
-        res.send( JSON.stringify({ newElements,
-        }));
-      })
-      .catch(function (err) {
-        console.log(err);
-      });
-  }
-  else {
-    var nameActor = req.body.name.properties.name;
-    session
-      .run(
-        'MATCH p = (person:Person {name:"' +
-        nameActor +
-          '"})-[edge]->(hollywood)  RETURN hollywood , edge'
-      )
-      .then(function (result) {
-        result.records.forEach(function (record) {
-          var id = "";
-          if (!movies.includes(record._fields[0].properties.title )) {
-            
-            newElements.push({
-              data: {
-                id: record._fields[0].identity.low + "n" + nameActor,
-                type: record._fields[0].labels[0],
-                properties: record._fields[0].properties,
-              },
-            });
-            id = record._fields[0].identity.low + "n" + nameActor;
-            movies.push(record._fields[0].properties.title);
-            movieArr.push({
-              data: {
-                id: record._fields[0].identity.low + "n" + nameActor,
-                type: record._fields[0].labels[0],
-                properties: record._fields[0].properties,
-              },
-            });
-          }
+  var session = driver.session();  
+  var nameActor = req.body.name.properties.name;
+  var relation =  req.body.type;
+  session
+    .run(
+      'MATCH p = (person:Person {name:"' +
+      nameActor +
+        '"})-[edge:'+ relation +']->(hollywood)  RETURN hollywood , edge'
+    )
+    .then(function (result) {
+      result.records.forEach(function (record) {
+        var id = "";
+        if (!movies.includes(record._fields[0].properties.title )) {
           
-          else{
-            movieArr.forEach(function(element){
-              if(element.data.type =='Movie' && element.data.properties.title == record._fields[0].properties.title){
-                id =element.data.id;    
-              }
-            }) 
-  
-          }
-          if(!movieArr.some(e => e.data.id == id+req.body.name.id +record._fields[1].type)){
-            newElement = {
-              data: {
-                id:id+
-                  req.body.name.id +
-                  record._fields[1].type,
-                source: id,
-                target: req.body.name.id,
-                label: record._fields[1].type,
-                properties: record._fields[1].properties,
-              },
-            };
-            newElements.push(newElement) ;
-            movieArr.push(newElement);
+          newElements.push({
+            data: {
+              id: record._fields[0].identity.low + "n" + nameActor,
+              type: record._fields[0].labels[0],
+              properties: record._fields[0].properties,
+            },
+          });
+          id = record._fields[0].identity.low + "n" + nameActor;
+          movies.push(record._fields[0].properties.title);
+          movieArr.push({
+            data: {
+              id: record._fields[0].identity.low + "n" + nameActor,
+              type: record._fields[0].labels[0],
+              properties: record._fields[0].properties,
+            },
+          });
+        }
+        
+        else{
+          movieArr.forEach(function(element){
+            if(element.data.type =='Movie' && element.data.properties.title == record._fields[0].properties.title){
+              id =element.data.id;    
+            }
+          }) 
 
-          }
+        }
+        if(!movieArr.some(e => e.data.id == id+req.body.name.id +record._fields[1].type)){
+          newElement = {
+            data: {
+              id:id+
+                req.body.name.id +
+                record._fields[1].type,
+              source: id,
+              target: req.body.name.id,
+              type: record._fields[1].type,
+              label: record._fields[1].type,
+              properties: record._fields[1].properties,
+            },
+          };
+          newElements.push(newElement) ;
+          movieArr.push(newElement);
 
-        });
-        res.send( JSON.stringify({ newElements,
-        }));
-      })
-      .catch(function (err) {
-        console.log(err);
+        }
+
       });
-  }
+      res.send( JSON.stringify({ newElements,
+      }));
+    })
+    .catch(function (err) {
+      console.log(err);
+    });
+});
+
+app.post("/addPeople", function (req, res) {
+  newElements = [];
+  var driver = neo4j.driver("bolt://localhost", neo4j.auth.basic());
+  var session = driver.session();  
+  var title = req.body.name.properties.title;
+  var relation = req.body.type;
+  session
+    .run(
+      'MATCH p = (movie:Movie {title:"' +
+        title +
+        '"})<-[edge:'+relation+']-(hollywood)  RETURN hollywood , edge'
+    )
+    .then(function (result) {
+      result.records.forEach(function (record) {
+        var id = "";
+        if (!actors.includes(record._fields[0].properties.name )) {
+          
+          newElements.push({
+            data: {
+              id: record._fields[0].identity.low + "n" + title,
+              type: record._fields[0].labels[0],
+              properties: record._fields[0].properties,
+            },
+          });
+          id = record._fields[0].identity.low + "n" + title;
+          actors.push(record._fields[0].properties.name);
+          movieArr.push({
+            data: {
+              id: record._fields[0].identity.low + "n" + title,
+              type: record._fields[0].labels[0],
+              properties: record._fields[0].properties,
+            },
+          });
+        }      
+        else{
+          movieArr.forEach(function(element){
+            if(element.data.type =='Person' && element.data.properties.name == record._fields[0].properties.name){
+              id =element.data.id;    
+            }
+          }) 
+
+        }
+        if(!movieArr.some(e => e.data.id == id+req.body.name.id +record._fields[1].type)){
+          newElement = {
+            data: {
+              id:id+
+                req.body.name.id +
+                record._fields[1].type,
+              source: id,
+              target: req.body.name.id,
+              type: record._fields[1].type,
+              label: record._fields[1].type,
+              properties: record._fields[1].properties,
+            },
+          };
+          newElements.push(newElement) ;
+          movieArr.push(newElement);
+
+        }
+
+      });
+      res.send( JSON.stringify({ newElements,
+      }));
+    })
+    .catch(function (err) {
+      console.log(err);
+    });  
+
 });
 
 app.listen(3000);

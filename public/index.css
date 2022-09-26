@@ -107,3 +107,7 @@ h1,p{
 .card.visible .container h4{
   text-align: center;
 }
+hr{
+  color: #A0A0A0;
+  background-color: #A0A0A0;
+}

@@ -74,6 +74,8 @@
                 { 
                     container: document.getElementById("cy"), 
                     layout:layoutOptions, 
+                    selectionType: 'additive',
+                    boxSelectionEnabled: true,
                     style: [ 
                         { 
                             selector: 'node[type]=\'Movie\']', 
@@ -107,7 +109,7 @@
                         }, 
                         { selector: "edge[label]", 
                         css: { 
-                            "label": "data(label)",
+                            "label": "data(type)",
                              "text-rotation": "autorotate", 
                              'font-size':'10px' 
                             } 
@@ -116,22 +118,178 @@
                     elements: elements, 
                 }
             );
-            var contextMenu = cy.contextMenus({
-                
-          menuItems: [
+            var contextMenu = cy.contextMenus({ 
+            menuItems: [
             {
-              id: 'showActors',
-              content:"Show Actors",
+              id: 'showMovies',
+              content:"Show Movies",
               tooltipText: 'show',
-              selector: 'node[type="Movie"]' ,
+              selector: 'node[type="Person"]' ,
               onClickFunction: async function (event) {
-                var res = await fetch('/add', {
+                var res = await fetch('/addMovies', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                         },
                     body: JSON.stringify({
                         name: event.target[0]._private.data,
+                        type: "ACTED_IN"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },
+            {
+              id: 'showDMovies',
+              content:"Show Directed Movies",
+              tooltipText: 'show',
+              selector: 'node[type="Person"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addMovies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "DIRECTED"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },
+            {
+              id: 'showWMovies',
+              content:"Show Written Movies",
+              tooltipText: 'show',
+              selector: 'node[type="Person"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addMovies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "WROTE"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },
+            {
+              id: 'showPMovies',
+              content:"Show Produced Movies",
+              tooltipText: 'show',
+              selector: 'node[type="Person"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addMovies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "PRODUCED"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },           
+            {
+              id: 'showFollows',
+              content:"Show Following",
+              tooltipText: 'show',
+              selector: 'node[type="Person"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addMovies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "FOLLOWS"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },
+            {
+              id: 'showReviews',
+              content:"Show Review Movies",
+              tooltipText: 'show',
+              selector: 'node[type="Person"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addMovies', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "REVIEWED"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },
+            {
+              id: 'showActors',
+              content:"Show Actors",
+              tooltipText: 'show',
+              selector: 'node[type="Movie"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addPeople', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type:"ACTED_IN"
                     } 
                 )})
                 .then(response => response.text())
@@ -144,20 +302,22 @@
               hasTrailingDivider: true
             },
             {
-              id: 'showMovies',
-              content:"Show Movies",
+              id: 'showDirectors',
+              content:"Show Directors",
               tooltipText: 'show',
-              selector: 'node[type="Person"]' ,
+              selector: 'node[type="Movie"]' ,
               onClickFunction: async function (event) {
-                var res = await fetch('/add', {
+                var res = await fetch('/addPeople', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                         },
                     body: JSON.stringify({
                         name: event.target[0]._private.data,
+                        type: "DIRECTED"
                     } 
-                )})
+                )}, 
+                )
                 .then(response => response.text())
                 .then((response) => {
                 layoutOptions.randomize = false;
@@ -166,41 +326,122 @@
                 });
               },
               hasTrailingDivider: true
-            }
+            },
+            {
+              id: 'ShowWrite',
+              content:"Show Writer",
+              tooltipText: 'show',
+              selector: 'node[type="Movie"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addPeople', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "WROTE"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },
+            {
+              id: 'showProduced',
+              content:"Show Produced",
+              tooltipText: 'show',
+              selector: 'node[type="Movie"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addPeople', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "PRODUCED"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },
+            {
+              id: 'showReviewed',
+              content:"Show Reviewed",
+              tooltipText: 'show',
+              selector: 'node[type="Movie"]' ,
+              onClickFunction: async function (event) {
+                var res = await fetch('/addPeople', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                        },
+                    body: JSON.stringify({
+                        name: event.target[0]._private.data,
+                        type: "REVIEWED"
+                    } 
+                )}, 
+                )
+                .then(response => response.text())
+                .then((response) => {
+                layoutOptions.randomize = false;
+                cy.add(JSON.parse(response).newElements);
+                cy.layout(layoutOptions).run(); // returns empty string
+                });
+              },
+              hasTrailingDivider: true
+            },                                         
           ],
           menuItemClasses: ['custom-menu-item'],
           contextMenuClasses: ['custom-context-menu']
         });
-            cy.edges('edge').style({ "curve-style": "bezier", "target-arrow-shape": "triangle", })
-            cy.on('select', 'node', function(event){
-                var ul = document.getElementById("propertiesLst");
+        cy.edges('edge').style({ "curve-style": "bezier", "target-arrow-shape": "triangle", })
+        cy.on('select',  function(event){
+            var ul = document.getElementById("propertiesLst");
                 ul.innerHTML ="";
                 clearTimeout(cy.nodesSelectionTimeout);
                 cy.nodesSelectionTimeout = setTimeout(function () {
-                    var prop = cy.$('node:selected')[0]._private.data.properties; 
-                    var element = document.getElementById("card");
-                    element.classList.add("visible");
-                    for (var key in prop) {
-                        var li = document.createElement("li");
-                        li.appendChild(document.createTextNode(key + " = " + JSON.stringify(prop[key])));
-                         ul.appendChild(li);
+                let nodes = cy.$(':selected');
+                nodes.forEach(element => {
+                    var prop =""; 
+                    if(element._private.data.type == 'Movie'){
+                        prop = "Movie Title: "+element._private.data.properties.title+" , "+
+                        "Tagline: "+element._private.data.properties.tagline+" , "+ 
+                        "Released: "+element._private.data.properties.released.low;
+
+                    }else if (element._private.data.type == 'Person'){
+                        prop = "Name: "+element._private.data.properties.name+" , "+
+                        "Born: "+element._private.data.properties.born.low;
+                    }else{
+                        prop = "Relation Type: "+element._private.data.type+" , "+
+                        "Roles: "+element._private.data.properties.roles;
                     }
-            }, 300)
-            cy.on('select', 'edge', function(event){
-                var ul = document.getElementById("propertiesLst");
-                ul.innerHTML ="";
-                var prop = cy.$('edge:selected')[0]._private.data.properties; 
-                var element = document.getElementById("card");
-                element.classList.add("visible");
-                for (var key in prop) {
-                   var li = document.createElement("li");
-                   li.appendChild(document.createTextNode(key + " = " + JSON.stringify(prop[key])));
+                    var div = document.getElementById("card");
+                    div.classList.add("visible");
+                    var li = document.createElement("li");
+                    li.innerHTML += '<p>'+prop+'</p><hr></hr>';
                     ul.appendChild(li);
-                }
+                });
 
-                }, )       
+            }, 300)
 
-            })
+        }) 
+
+        
         </script>
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
