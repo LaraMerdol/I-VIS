@@ -424,8 +424,11 @@
                         "Released: "+element._private.data.properties.released.low;
 
                     }else if (element._private.data.type == 'Person'){
-                        prop = "Name: "+element._private.data.properties.name+" , "+
-                        "Born: "+element._private.data.properties.born.low;
+                        console.log(element._private.data)
+                        prop= "Name: "+element._private.data.properties.name+" , ";
+                        if(element._private.data.properties.born){
+                            prop+= "Born: "+element._private.data.properties.born.low ; 
+                        }
                     }else{
                         prop = "Relation Type: "+element._private.data.type+" , "+
                         "Roles: "+element._private.data.properties.roles;
